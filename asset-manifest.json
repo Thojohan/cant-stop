@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/cant-stop/static/css/main.f3298d85.css",
-    "main.js": "/cant-stop/static/js/main.b3b85e37.js",
+    "main.js": "/cant-stop/static/js/main.ce07d3c4.js",
     "static/media/cantstop.jpg": "/cant-stop/static/media/cantstop.be4d2c6becb691c3874f.jpg",
     "index.html": "/cant-stop/index.html",
     "main.f3298d85.css.map": "/cant-stop/static/css/main.f3298d85.css.map",
-    "main.b3b85e37.js.map": "/cant-stop/static/js/main.b3b85e37.js.map"
+    "main.ce07d3c4.js.map": "/cant-stop/static/js/main.ce07d3c4.js.map"
   },
   "entrypoints": [
     "static/css/main.f3298d85.css",
-    "static/js/main.b3b85e37.js"
+    "static/js/main.ce07d3c4.js"
   ]
 }
