@@ -1,81 +1,81 @@
 import { useState, useRef, useEffect } from "react";
 import { Gameboard } from "./Gameboard";
+// import Initialize from "./Initialize";
 import { Player } from "./Player";
-import { Result } from "./Result";
 import { DiceResultSorter } from "./DiceResultSorter";
 import { Decisions } from "./Decisions";
+import { Result } from "./Result";
 import { Modal } from "./Modal";
-import { Rules } from "./Rules";
+import { ButtonLogic } from "./ButtonLogic";
 
 export default function App() {
-  const timerRef = useRef(null);
   const [gameState, setGameState] = useState({
     active: 1,
-    activeButtons: false,
+    isPlaying: false,
     isRolling: false,
-    hasBusted: false,
-    completedRow: [],
-    tempCompleted: [],
-    commitDice: {},
+    bustCount: 0,
+    completedRow: [6, 7],
+    commitDice: { 8: 1, 6: 2 },
     logArray: [],
-    winner: null,
-    moves: [3, 5, 7, 9, 11, 13, 11, 9, 7, 5, 3],
   });
 
   const [showModal, setShowModal] = useState(false);
-  const [showRules, setShowRules] = useState(false);
   const [playerArray, setPlayerArray] = useState([]);
   const [diceArray, setDiceArray] = useState([]);
 
   const setOfDice = useRef([]);
+  const bustCount = useRef(0);
 
   function setOfDiceHandler(input) {
-    timerRef.current = null;
     setOfDice.current = input;
+  }
+
+  function updateBustCount(input) {
+    if ((input = "increase")) bustCount.current = bustCount.current + 1;
+    if ((input = "reset")) bustCount.current = 0;
   }
 
   const handledArray = DiceResultSorter(
     setOfDice.current,
-    [...gameState.completedRow, ...gameState.tempCompleted],
-    gameState.commitDice,
-    gameState.moves,
-    playerArray[gameState.active - 1]?.selected
+    gameState.completedRow,
+    gameState.commitDice
   );
 
+  console.log(handledArray);
+
   useEffect(() => {
-    if (timerRef.current)
-      return () => {
-        clearTimeout(timerRef.current);
-      };
     if (!handledArray) return;
-    if (gameState.hasBusted === true) return;
-    const bustCount = handledArray?.filter(
-      (el) => el.renderCode === "d"
-    ).length;
-    if (bustCount < 3) return;
-    setGameState({
-      ...gameState,
-      hasBusted: true,
-      logArray: [
-        ...gameState.logArray,
-        [
-          playerArray[gameState.active - 1],
-          "couldn't continue, and lost all progress they made this turn",
-        ],
-      ],
-    });
-    timerRef.current = setTimeout(() => {
-      setGameState((gameState) => ({
-        ...gameState,
-        hasBusted: false,
-        isRolling: false,
-        activeButtons: true,
-        active: playerArray[gameState.active] ? gameState.active + 1 : 1,
-        commitDice: [],
-      }));
-      setDiceArray([]);
-    }, 3500);
-  }, [gameState, handledArray, playerArray]);
+    console.log(handledArray);
+  }, [handledArray]);
+
+  // function updateBustCount() {
+  //   bustCount.current = bustCount.current + 1;
+  //   console.log(bustCount);
+  //   if (bustCount.current < 3) return;
+  //   setGameState((gameState) => ({
+  //     ...gameState,
+  //     isPlaying: false,
+  //   }));
+  //   setTimeout(() => {
+  //     bustCount.current = 0;
+  //
+  //     console.log("yo yo yo");
+  //     setGameState((gameState) => ({
+  //       ...gameState,
+  //       isRolling: false,
+  //       isPlaying: true,
+  //       active: playerArray[gameState.active] ? gameState.active + 1 : 1,
+  //     }));
+  //     setDiceArray([]);
+  //   }, 4000);
+  //   console.log(gameState);
+  // }
+
+  // const direction = Initialize();
+
+  function handleNewGame() {
+    setShowModal(true);
+  }
 
   function closeModalHandler(e) {
     if (
@@ -83,21 +83,13 @@ export default function App() {
       e.target.className.includes("round-button")
     )
       setShowModal(false);
-    setShowRules(false);
   }
 
   return (
     <div className="page-container">
-      <Gameboard
-        gameState={gameState}
-        setGameState={setGameState}
-        playerArray={playerArray}
-      />
+      <Gameboard gameState={gameState} />
       <section className="admin-container">
         <div className="title-container">
-          <button className="round-button" onClick={() => setShowRules(true)}>
-            ?
-          </button>
           <p className="title" style={{ fontSize: "3.5rem" }}>
             Can't Stop
           </p>
@@ -105,56 +97,46 @@ export default function App() {
         </div>
         <div className="player-area">
           {playerArray.map((el, i) => {
-            if (!el || !el.name) return "";
+            if (!el || !el.name || !gameState.isPlaying) return "";
             return (
               <Player
                 playerName={el.name}
                 playerNumber={i + 1}
-                stars={playerArray[i].completed.length}
                 backgroundColor={el.color}
                 key={el.name + el.color}
                 isActive={i + 1 === gameState.active}
-                winner={gameState.winner === i}
               />
             );
           })}
         </div>
-        <div className="game-log scrollbar">
+        <div className="game-log">
           {[...gameState.logArray].reverse().map((el, i) => (
-            <p
-              key={i}
-              style={{
-                fontWeight:
-                  el[2] === "completed" || el[2] === "won" ? "bold" : "normal",
-              }}
-            >
-              <span style={{ color: el[0].color }}> {el[0].name}</span> {el[1]}
+            <p key={new Date().getTime() + el[i].color}>
+              <span style={{ color: el[0].color }}> {el[0].name}</span>{" "}
+              {el.length > 0
+                ? `advanced on ${el[1].join(" and ")}`
+                : "couldn't continue, and lost all progress"}
             </p>
           ))}
         </div>
         <Decisions
-          setShowModal={setShowModal}
+          updateBustCount={updateBustCount}
+          handleNewGame={handleNewGame}
           gameState={gameState}
           setGameState={setGameState}
           diceArray={diceArray}
           setDiceArray={setDiceArray}
           setOfDiceHandler={setOfDiceHandler}
-          playerArray={playerArray}
-          setPlayerArray={setPlayerArray}
         >
           {setOfDice.current.length > 0 &&
             setOfDice.current.map((el, i) => (
               <Result
-                key={i}
                 el={el}
                 setOfDice={setOfDice}
                 handledArray={handledArray}
                 sorted={handledArray[i].sorted}
                 render={handledArray[i].renderCode}
-                gameState={gameState}
-                setGameState={setGameState}
-                playerArray={playerArray}
-                setDiceArray={setDiceArray}
+                alreadyCommited={gameState.commitDice}
               />
             ))}
         </Decisions>
@@ -168,7 +150,6 @@ export default function App() {
           closeModalHandler={closeModalHandler}
         />
       )}
-      {showRules && <Rules closeModalHandler={closeModalHandler} />}
     </div>
   );
 }

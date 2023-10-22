@@ -58,10 +58,7 @@ export default function App() {
       hasBusted: true,
       logArray: [
         ...gameState.logArray,
-        [
-          playerArray[gameState.active - 1],
-          "couldn't continue, and lost all progress they made this turn",
-        ],
+        [playerArray[gameState.active - 1], "busted"],
       ],
     });
     timerRef.current = setTimeout(() => {
@@ -124,11 +121,15 @@ export default function App() {
             <p
               key={i}
               style={{
-                fontWeight:
-                  el[2] === "completed" || el[2] === "won" ? "bold" : "normal",
+                fontWeight: el[1][0] === "completed" ? "bold" : "normal",
               }}
             >
-              <span style={{ color: el[0].color }}> {el[0].name}</span> {el[1]}
+              <span style={{ color: el[0].color }}> {el[0].name}</span>{" "}
+              {el[1] === "busted"
+                ? "couldn't continue, and lost all progress made this turn"
+                : el[1][0] === "completed"
+                ? `has won row ${el[1][1].join(" and ")} !!`
+                : `advanced on column ${el[1].join(" and ")}`}
             </p>
           ))}
         </div>
