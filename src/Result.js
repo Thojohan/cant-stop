@@ -6,6 +6,7 @@ export function Result({
   setGameState,
   setDiceArray,
   playerArray,
+  setOfDice,
 }) {
   function progressHandler(e) {
     const newEl = e.target.dataset.value.split(",");
@@ -46,6 +47,7 @@ export function Result({
       ],
     });
     setDiceArray([]);
+    setOfDice.current = [];
   }
 
   const alreadyCommited = sorted.filter(
