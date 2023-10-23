@@ -25,16 +25,6 @@
   background-repeat: no-repeat;
 }
 
-@media (orientation: portrait) {
-  .page-container {
-    flex-direction: column;
-  }
-
-  .gameboard-container {
-    width: 100%;
-  }
-}
-
 .inner-div {
   display: flex;
   width: 62.4%;
@@ -263,15 +253,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 5%;
+  margin-top: 10%;
   padding: 10px;
   width: 60%;
   height: 60%;
-  min-width: 280px;
-  min-height: 350px;
+  min-width: 300px;
+  min-height: 250px;
   border-style: solid;
   background-color: rgb(255, 255, 255);
-  font-size: 18px;
+  font-size: 19px;
   overflow-y: auto;
 }
 
@@ -295,12 +285,13 @@ h4 {
 
 .player-input {
   position: relative;
+  margin-top: 20px;
   width: 100%;
 }
 
 .player-input p {
   line-height: 100%;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .round-button {
@@ -315,9 +306,25 @@ h4 {
 }
 
 .modal-footer {
-  position: absolute;
-  bottom: 30px;
+  position: relative;
+  margin-bottom: 15px;
+  right: 15px;
+  margin-top: auto;
   display: flex;
-  justify-content: center;
+  justify-content: right;
   width: 100%;
+}
+
+@media (orientation: portrait) {
+  .page-container {
+    flex-direction: column;
+  }
+
+  .gameboard-container {
+    width: 100%;
+  }
+
+  .dialog-box {
+    font-size: 17px;
+  }
 }
